@@ -1,0 +1,4 @@
+[wokwi]
+version = 1
+firmware = 'build/BitDogLab-IRQ-WS2812.uf2'
+elf = 'build/BitDogLab-IRQ-WS2812.elf'
