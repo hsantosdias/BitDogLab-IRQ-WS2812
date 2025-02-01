@@ -2,7 +2,7 @@
 #include "pico/stdlib.h"
 
 
-int void () {
+int main () {
 	
 	
 printf("Hello, World!\n");
