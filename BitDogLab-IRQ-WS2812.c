@@ -2,15 +2,32 @@
 #include "pico/stdlib.h"
 #include "hardware/timer.h"
 
-#define BUTTON_PIN_A 5
-#define BUTTON_PIN_B 6
-#define LED_PIN_RED 13 // Definição do pino do LED vermelho
+struct ButtonPins {
+    uint button_a;
+    uint button_b;
+};
+
+struct LEDPins {
+    uint red;
+    uint green;
+    uint blue;
+};
+
+struct MatrixLedWS2812 {
+    uint8_t red;
+    uint8_t green;
+    uint8_t blue;
+};
+
+struct ButtonPins button_pins = {5, 6};
+struct LEDPins led_pins = {13, 11, 12};
+struct MatrixLedWS2812 matrix_leds[5][5];
 
 // Função para atualizar os estados dos LEDs
-void set_led_color(uint red_pin, uint green_pin, uint blue_pin, bool R, bool G, bool B) {
-    gpio_put(red_pin, R);   // Configura o estado do LED vermelho
-    gpio_put(green_pin, G); // Configura o estado do LED verde
-    gpio_put(blue_pin, B);  // Configura o estado do LED azul
+void set_led_color(struct LEDPins leds, bool R, bool G, bool B) {
+    gpio_put(leds.red, R);   // Configura o estado do LED vermelho
+    gpio_put(leds.green, G); // Configura o estado do LED verde
+    gpio_put(leds.blue, B);  // Configura o estado do LED azul
 }
 
 bool led_on = false;
@@ -18,28 +35,22 @@ bool led_on = false;
 bool repeating_timer_callback(struct repeating_timer *t) {
     printf("1 segundo passou\n");
     led_on = !led_on;
-    gpio_put(LED_PIN_RED, led_on);
+    gpio_put(led_pins.red, led_on);
     return true;
 }
 
 int main() {
     stdio_init_all();
     
-    gpio_init(LED_PIN_RED);
-    gpio_set_dir(LED_PIN_RED, GPIO_OUT);
+    gpio_init(led_pins.red);
+    gpio_set_dir(led_pins.red, GPIO_OUT);
    
     // Configuração dos pinos GPIO
-    const uint red_pin = 13;   // Pino para o LED vermelho
-    const uint green_pin = 11; // Pino para o LED verde
-    const uint blue_pin = 12;  // Pino para o LED azul
+    gpio_init(led_pins.green);
+    gpio_init(led_pins.blue);
 
-    gpio_init(red_pin);
-    gpio_init(green_pin);
-    gpio_init(blue_pin);
-
-    gpio_set_dir(red_pin, GPIO_OUT);
-    gpio_set_dir(green_pin, GPIO_OUT);
-    gpio_set_dir(blue_pin, GPIO_OUT);
+    gpio_set_dir(led_pins.green, GPIO_OUT);
+    gpio_set_dir(led_pins.blue, GPIO_OUT);
    
     struct repeating_timer timer;
     add_repeating_timer_ms(1000, repeating_timer_callback, NULL, &timer);
