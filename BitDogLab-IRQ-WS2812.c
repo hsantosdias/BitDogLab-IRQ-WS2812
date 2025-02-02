@@ -8,12 +8,13 @@
 // Biblioteca gerada pelo arquivo ws2818b.pio 
 #include "ws2818b.pio.h"
 
+// Definições gerais do projeto
+#include "libs/definicoes.h"
 
 //Reeaproveitamento de codigo Hugo S. Dias
 #include "libs/animacao_hugo.c"
 
-// Definições gerais do projeto
-#include "libs/definicoes.h"
+
 
 
 struct ButtonPins {
@@ -66,10 +67,20 @@ int main() {
     gpio_set_dir(led_pins.green, GPIO_OUT);
     gpio_set_dir(led_pins.blue, GPIO_OUT);
    
+    // Inicializa a máquina PIO
+    // 5 frames em 1 segundo
+    // Inicializa a matriz de LEDs neoPixel
+    npInit(MATRIX_LED_PIN);
+    // Limpa a matriz de LEDs
+    npClear();
+    animacao5frames1seg();
+
     struct repeating_timer timer;
     add_repeating_timer_ms(1000, repeating_timer_callback, NULL, &timer);
     
     while (true) {
+
+
         sleep_ms(10000);
         printf("Rotina de repetição\n");
     }

@@ -93,7 +93,7 @@ void animateMatrix(LED frames[][ROWS][COLS], int numFrames, int fps) {
 }
 
 // ** Animação Tecla 5**
-void animacao5() {
+void animacao5frames1seg() {
     // Define os frames da animação (mínimo 5 frames)
     LED frames[5][ROWS][COLS];
 
