@@ -90,7 +90,7 @@ O código está estruturado e comentado para facilitar a compreensão e reutiliz
 
 ##### Principais Arquivos
 
-- main.c → Código principal com controle de LEDs e botões via interrupções.
+- BitDogLab-IRQ-WS2812.c → Código principal com controle de LEDs e botões via interrupções.
 - ws2818b.pio.h → Código PIO customizado para comunicação eficiente com os LEDs WS2812.
 
 ##### Estrutura do Código
