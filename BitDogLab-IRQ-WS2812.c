@@ -14,13 +14,39 @@
 //Reeaproveitamento de codigo Hugo S. Dias
 #include "libs/animacao_hugo.c"
 
-
-
-
 struct ButtonPins {
     uint button_a;
     uint button_b;
 };
+
+// Instância da estrutura
+struct ButtonPins button_pins = {5, 6};
+
+// Variável para armazenar o número exibido
+volatile int numero_exibido = 0;
+
+// Prototótipos das funções
+void gpio_irq_handler(uint gpio, uint32_t events);
+void exibir_numero(int numero);
+
+
+
+// Função de interrupção para os botões
+void gpio_irq_handler(uint gpio, uint32_t events) {
+    sleep_ms(50); // Debounce simples
+    if (gpio == button_pins.button_a) {
+        numero_exibido = (numero_exibido + 1) % 10; // Incrementa e mantém no intervalo 0-9
+    } else if (gpio == button_pins.button_b) {
+        numero_exibido = (numero_exibido - 1 + 10) % 10; // Decrementa e mantém no intervalo 0-9
+    }
+    exibir_numero(numero_exibido); // Mostra o número na saída serial
+}
+
+// Função para exibir o número na saída serial
+void exibir_numero(int numero) {
+    printf("Número exibido: %d\n", numero);
+}
+
 
 struct LEDPins {
     uint red;
@@ -34,7 +60,7 @@ struct MatrixLedWS2812 {
     uint8_t blue;
 };
 
-struct ButtonPins button_pins = {5, 6};
+
 struct LEDPins led_pins = {13, 11, 12};
 struct MatrixLedWS2812 matrix_leds[5][5];
 
@@ -56,6 +82,29 @@ bool repeating_timer_callback(struct repeating_timer *t) {
 
 int main() {
     stdio_init_all();
+
+    // Inicializa os botões
+    gpio_init(button_pins.button_a);
+    gpio_set_dir(button_pins.button_a, GPIO_IN);
+    gpio_pull_up(button_pins.button_a);
+    gpio_set_irq_enabled_with_callback(button_pins.button_a, GPIO_IRQ_EDGE_FALL, true, &gpio_irq_handler);
+
+    gpio_init(button_pins.button_b);
+    gpio_set_dir(button_pins.button_b, GPIO_IN);
+    gpio_pull_up(button_pins.button_b);
+    gpio_set_irq_enabled_with_callback(button_pins.button_b, GPIO_IRQ_EDGE_FALL, true, &gpio_irq_handler);
+
+    while (true) {
+        sleep_ms(1000); // Mantém o loop principal rodando
+        printf("Rotina de repetição\n");
+    }
+    return 0;
+}
+
+
+/*
+int main() {
+    stdio_init_all();
     
     gpio_init(led_pins.red);
     gpio_set_dir(led_pins.red, GPIO_OUT);
@@ -70,10 +119,10 @@ int main() {
     // Inicializa a máquina PIO
     // 5 frames em 1 segundo
     // Inicializa a matriz de LEDs neoPixel
-    npInit(MATRIX_LED_PIN);
+    //npInit(MATRIX_LED_PIN);
     // Limpa a matriz de LEDs
-    npClear();
-    animacao5frames1seg();
+    //npClear();
+    //animacao5frames1seg();
 
     struct repeating_timer timer;
     add_repeating_timer_ms(1000, repeating_timer_callback, NULL, &timer);
@@ -87,3 +136,5 @@ int main() {
     
     return 0;
 }
+
+*/
