@@ -27,6 +27,16 @@ O código combina temporizadores, interrupções externas e comunicação eficie
 - Controle de LEDs comuns e endereçáveis.
 - Uso eficiente dos resistores de pull-up internos.
 
+### Simulador para a prototipação do projeto
+
+[Link para o Simulador WOKWI para este projeto](https://wokwi.com/projects/421723658398901249 "Simulador WOKWI para este projeto")
+
+[![Simulador do Projeto](imgs/simulador.png "Simulador do Projeto")](https://github.com/hsantosdias/BitDogLab-IRQ-WS2812/blob/main/imgs/simulador.png?raw=true "Simulador do Projeto")
+
+### Fluxograma do projeto
+
+[![Fluxograma do projeto](imgs/fluxograma.png "Fluxograma do projeto")](https://github.com/hsantosdias/BitDogLab-IRQ-WS2812/blob/main/imgs/fluxograma.png?raw=true "Fluxograma do projeto")
+
 ## Bibliotecas Utilizadas e Justificativas
 
 A escolha das bibliotecas foi baseada em eficiência e controle preciso do hardware:
@@ -70,6 +80,7 @@ O código está estruturado e comentado para facilitar a compreensão e reutiliz
 - npWrite() → Atualiza a matriz de LEDs, garantindo sincronização correta.
 - gpio_callback() → Trata eventos de botão e altera a exibição da matriz.
 - blink_led_callback() → Mantém o LED vermelho piscando 5 vezes por segundo.
+
 
 
 ### Demonstração
