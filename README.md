@@ -104,7 +104,9 @@ O código está estruturado e comentado para facilitar a compreensão e reutiliz
 
 Além do código-fonte, disponibilizo um vídeo demonstrando o funcionamento do projeto na placa BitDogLab.
 
-[Video demonstrado o projeto em funcionamento](http://https://drive.google.com/file/d/1TTDvBE8vrRn3kkZL7hDkG23QfaxWnmqs/view "Video demonstrado o projeto em funcionamento")
+
+[Video demonstrado o projeto em funcionamento](https://drive.google.com/file/d/1TTDvBE8vrRn3kkZL7hDkG23QfaxWnmqs/view?usp=sharing "Video de apresentaçãp do projeto")
+
 
 ### Requisitos para Execução
 
