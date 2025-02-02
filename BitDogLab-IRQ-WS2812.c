@@ -1,6 +1,20 @@
 #include <stdio.h>
 #include "pico/stdlib.h"
-#include "hardware/timer.h"
+#include "hardware/gpio.h"
+#include "hardware/clocks.h"
+#include "pio_config.h"
+#include "pico/bootrom.h"
+
+// Biblioteca gerada pelo arquivo ws2818b.pio 
+#include "ws2818b.pio.h"
+
+
+//Reeaproveitamento de codigo Hugo S. Dias
+#include "libs/animacao_hugo.c"
+
+// Definições gerais do projeto
+#include "libs/definicoes.h"
+
 
 struct ButtonPins {
     uint button_a;
