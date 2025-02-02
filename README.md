@@ -36,22 +36,22 @@ O código combina temporizadores, interrupções externas e comunicação eficie
 ### Fluxograma do projeto
 
 #### Explicação do Fluxograma
-- Bloco de Inicialização (cluster_Init)
-Start → O programa inicia sua execução.
-Init → GPIOs, timers e a matriz WS2812 são configurados.
-Loop → O loop principal é iniciado para manter o sistema rodando.
-- Temporizador Periódico (cluster_TimerPeriodico)
-Loop → No loop principal, o temporizador periódico verifica o tempo a cada 200ms.
-Semaforo → O LED vermelho alterna entre ligado/desligado 5 vezes por segundo.
-SerialMsg → Mensagens de status podem ser enviadas para a saída serial.
-Loop → O fluxo retorna ao loop principal.
-- Temporizador One-Shot para Botões (cluster_TimerOneShot)
-Loop → O programa verifica eventos no GPIO.
-BotaoPress → Se o botão for pressionado, uma interrupção é gerada.
-OneShot → Um timer one-shot é acionado para debounce.
-Debounce → Confirma se o botão realmente foi pressionado (evita falsos acionamentos).
-EndSeq → Atualiza a exibição da matriz WS2812.
-Loop → O fluxo retorna ao loop principal.
+1. Bloco de Inicialização (cluster_Init)
+- Start → O programa inicia sua execução.
+- Init → GPIOs, timers e a matriz WS2812 são configurados.
+- Loop → O loop principal é iniciado para manter o sistema rodando.
+1. Temporizador Periódico (cluster_TimerPeriodico)
+- Loop → No loop principal, o temporizador periódico verifica o tempo a cada 200ms.
+- Semaforo → O LED vermelho alterna entre ligado/desligado 5 vezes por segundo.
+- SerialMsg → Mensagens de status podem ser enviadas para a saída serial.
+- Loop → O fluxo retorna ao loop principal.
+2. Temporizador One-Shot para Botões (cluster_TimerOneShot)
+- Loop → O programa verifica eventos no GPIO.
+- BotaoPress → Se o botão for pressionado, uma interrupção é gerada.
+- OneShot → Um timer one-shot é acionado para debounce.
+- Debounce → Confirma se o botão realmente foi pressionado (evita falsos acionamentos).
+- EndSeq → Atualiza a exibição da matriz WS2812.
+- Loop → O fluxo retorna ao loop principal.
 
 
 [![Fluxograma do projeto](imgs/fluxograma.png "Fluxograma do projeto")](https://github.com/hsantosdias/BitDogLab-IRQ-WS2812/blob/main/imgs/fluxograma.png?raw=true "Fluxograma do projeto")
