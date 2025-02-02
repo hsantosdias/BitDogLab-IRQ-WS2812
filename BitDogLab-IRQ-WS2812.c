@@ -2,13 +2,14 @@
 #include "pico/stdlib.h"
 #include "hardware/gpio.h"
 #include "hardware/clocks.h"
-#include "pio_config.h"
+#include "hardware/timer.h"
 #include "pico/bootrom.h"
 
 // Biblioteca gerada pelo arquivo ws2818b.pio 
 #include "ws2818b.pio.h"
 
-#include "hardware/timer.h"
+#include "pio_config.h"
+
 
 // Definições gerais do projeto
 #include "libs/definicoes.h"
@@ -56,9 +57,9 @@ void gpio_irq_handler(uint gpio, uint32_t events) {
         a++;
     }
     if (gpio == button_pins.button_a) {
-        numero_exibido = (numero_exibido + 1) % 3; // Ajustado para 3 números na matriz
+        numero_exibido = (numero_exibido + 1) % 10; // Ajustado para 3 números na matriz
     } else if (gpio == button_pins.button_b) {
-        numero_exibido = (numero_exibido - 1 + 3) % 3;
+        numero_exibido = (numero_exibido - 1 + 10) % 10;
     }
     exibir_numero(numero_exibido);
 }
