@@ -81,11 +81,11 @@ O código está estruturado e comentado para facilitar a compreensão e reutiliz
 - gpio_callback() → Trata eventos de botão e altera a exibição da matriz.
 - blink_led_callback() → Mantém o LED vermelho piscando 5 vezes por segundo.
 
-
-
 ### Demonstração
 
-Além do código-fonte, será disponibilizado um vídeo demonstrando o funcionamento do projeto na placa BitDogLab.
+Além do código-fonte, disponibilizo um vídeo demonstrando o funcionamento do projeto na placa BitDogLab.
+
+[Video demonstrado o projeto em funcionamento](http://https://drive.google.com/file/d/1TTDvBE8vrRn3kkZL7hDkG23QfaxWnmqs/view "Video demonstrado o projeto em funcionamento")
 
 ### Requisitos para Execução
 
