@@ -4,7 +4,7 @@
 
 O código combina temporizadores, interrupções externas e comunicação eficiente com LEDs WS2812b, tornando-o uma excelente base para projetos de IoT, automação e sistemas embarcados avançados.
 
-## **Por que esse projeto escolhido e de extrema importancia?**
+## **Por que esse projeto escolhido é de extrema importancia?**
 
 - Aprendizado sobre PIO no RP2040 → A PIO é um recurso poderoso do RP2040 que permite comunicação precisa com dispositivos como os LEDs WS2812, sem sobrecarregar a CPU.
 - Interrupções e eficiência energética → A abordagem baseada em IRQ (Interrupções) minimiza o consumo de CPU ao evitar polling constante.
