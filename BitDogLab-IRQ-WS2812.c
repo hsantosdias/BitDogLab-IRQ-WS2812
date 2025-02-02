@@ -8,10 +8,12 @@
 // Biblioteca gerada pelo arquivo ws2818b.pio 
 #include "ws2818b.pio.h"
 
+#include "hardware/timer.h"
+
 // Definições gerais do projeto
 #include "libs/definicoes.h"
 
-//Reeaproveitamento de codigo Hugo S. Dias
+// Reaproveitamento de código Hugo S. Dias
 #include "libs/animacao_hugo.c"
 
 #define TEMPO 2500
@@ -30,15 +32,8 @@ struct LEDPins {
     uint blue;
 };
 
-struct MatrixLedWS2812 {
-    uint8_t red;
-    uint8_t green;
-    uint8_t blue;
-};
-
 // Instância dos LEDs
 struct LEDPins led_pins = {13, 11, 12};
-struct MatrixLedWS2812 matrix_leds[5][5];
 
 // Variável para armazenar o número exibido
 volatile int numero_exibido = 0;
@@ -55,31 +50,22 @@ bool repeating_timer_callback(struct repeating_timer *t);
 // Função de interrupção para os botões
 void gpio_irq_handler(uint gpio, uint32_t events) {
     uint32_t current_time = to_us_since_boot(get_absolute_time());
-    printf("A = %d\n", a);
-    
-    if (current_time - last_time > 200000) { // 200 ms de debouncing
+    if (current_time - last_time > 200000) {
         last_time = current_time;
-        printf("Mudanca de Estado do Led. A = %d\n", a);
         gpio_put(led_pins.red, !gpio_get(led_pins.red));
         a++;
     }
-    
     if (gpio == button_pins.button_a) {
-        numero_exibido = (numero_exibido + 1) % 10;
+        numero_exibido = (numero_exibido + 1) % 3; // Ajustado para 3 números na matriz
     } else if (gpio == button_pins.button_b) {
-        numero_exibido = (numero_exibido - 1 + 10) % 10;
+        numero_exibido = (numero_exibido - 1 + 3) % 3;
     }
-    
     exibir_numero(numero_exibido);
 }
 
-// Função para exibir o número na saída serial
-void exibir_numero(int numero) {
-    printf("Número exibido: %d\n", numero);
-}
 
-/*
-void exibir_numero_matriz(int numero) {
+
+// Representação dos números de 0 a 9 na matriz 5x5
     const uint8_t numeros[10][5][5] = {
         // 0
         {{1, 1, 1, 1, 1},
@@ -142,7 +128,9 @@ void exibir_numero_matriz(int numero) {
          {0, 0, 0, 0, 1},
          {1, 1, 1, 1, 1}}
     };
-    
+
+// Função para exibir o número na saída serial
+void exibir_numero(int numero) {
     printf("Número na matriz 5x5:\n");
     for (int i = 0; i < 5; i++) {
         for (int j = 0; j < 5; j++) {
@@ -151,32 +139,6 @@ void exibir_numero_matriz(int numero) {
         printf("\n");
     }
 }
-
-*/
-void exibir_numero_matriz(int numero) {
-    const uint8_t numeros[10][5][5] = {
-        {{1, 1, 1, 1, 1}, {1, 0, 0, 0, 1}, {1, 0, 0, 0, 1}, {1, 0, 0, 0, 1}, {1, 1, 1, 1, 1}},
-        {{0, 0, 1, 0, 0}, {0, 1, 1, 0, 0}, {1, 0, 1, 0, 0}, {0, 0, 1, 0, 0}, {1, 1, 1, 1, 1}},
-        {{1, 1, 1, 1, 1}, {0, 0, 0, 0, 1}, {1, 1, 1, 1, 1}, {1, 0, 0, 0, 0}, {1, 1, 1, 1, 1}},
-        {{1, 1, 1, 1, 1}, {0, 0, 0, 0, 1}, {0, 1, 1, 1, 1}, {0, 0, 0, 0, 1}, {1, 1, 1, 1, 1}},
-        {{1, 0, 0, 1, 1}, {1, 0, 0, 1, 1}, {1, 1, 1, 1, 1}, {0, 0, 0, 1, 1}, {0, 0, 0, 1, 1}},
-        {{1, 1, 1, 1, 1}, {1, 0, 0, 0, 0}, {1, 1, 1, 1, 1}, {0, 0, 0, 0, 1}, {1, 1, 1, 1, 1}},
-        {{1, 1, 1, 1, 1}, {1, 0, 0, 0, 0}, {1, 1, 1, 1, 1}, {1, 0, 0, 0, 1}, {1, 1, 1, 1, 1}},
-        {{1, 1, 1, 1, 1}, {0, 0, 0, 0, 1}, {0, 0, 0, 1, 1}, {0, 0, 1, 1, 1}, {0, 0, 1, 1, 1}},
-        {{1, 1, 1, 1, 1}, {1, 0, 0, 0, 1}, {1, 1, 1, 1, 1}, {1, 0, 0, 0, 1}, {1, 1, 1, 1, 1}},
-        {{1, 1, 1, 1, 1}, {1, 0, 0, 0, 1}, {1, 1, 1, 1, 1}, {0, 0, 0, 0, 1}, {1, 1, 1, 1, 1}}
-    };
-    
-    printf("Número na matriz 5x5:\n");
-    for (int i = 0; i < 5; i++) {
-        for (int j = 0; j < 5; j++) {
-            matrix_leds[i][j].red = numeros[numero][i][j] ? 255 : 0;
-            printf("%d ", numeros[numero][i][j]);
-        }
-        printf("\n");
-    }
-}
-
 
 
 // Função para atualizar os estados dos LEDs
@@ -188,7 +150,6 @@ void set_led_color(struct LEDPins leds, bool R, bool G, bool B) {
 
 // Callback para o temporizador repetitivo
 bool repeating_timer_callback(struct repeating_timer *t) {
-    printf("1 segundo passou\n");
     led_on = !led_on;
     gpio_put(led_pins.red, led_on);
     return true;
@@ -196,30 +157,7 @@ bool repeating_timer_callback(struct repeating_timer *t) {
 
 int main() {
     stdio_init_all();
-    gpio_init(button_pins.button_a);
-    gpio_set_dir(button_pins.button_a, GPIO_IN);
-    gpio_pull_up(button_pins.button_a);
-    gpio_set_irq_enabled_with_callback(button_pins.button_a, GPIO_IRQ_EDGE_FALL, true, &gpio_irq_handler);
-    
-    gpio_init(button_pins.button_b);
-    gpio_set_dir(button_pins.button_b, GPIO_IN);
-    gpio_pull_up(button_pins.button_b);
-    gpio_set_irq_enabled_with_callback(button_pins.button_b, GPIO_IRQ_EDGE_FALL, true, &gpio_irq_handler);
-    
-    while (true) {
-        exibir_numero_matriz(numero_exibido);
-        sleep_ms(TEMPO);
-    }
-    return 0;
-}
 
-
-/*
-
-int main() {
-    stdio_init_all();
-
-    // Inicializa os LEDs
     gpio_init(led_pins.red);
     gpio_set_dir(led_pins.red, GPIO_OUT);
     gpio_init(led_pins.green);
@@ -227,7 +165,6 @@ int main() {
     gpio_init(led_pins.blue);
     gpio_set_dir(led_pins.blue, GPIO_OUT);
 
-    // Inicializa os botões
     gpio_init(button_pins.button_a);
     gpio_set_dir(button_pins.button_a, GPIO_IN);
     gpio_pull_up(button_pins.button_a);
@@ -247,6 +184,3 @@ int main() {
     }
     return 0;
 }
-
-
-*/
