@@ -14,6 +14,8 @@
 //Reeaproveitamento de codigo Hugo S. Dias
 #include "libs/animacao_hugo.c"
 
+#define TEMPO 2500
+
 struct ButtonPins {
     uint button_a;
     uint button_b;
@@ -21,32 +23,6 @@ struct ButtonPins {
 
 // Instância da estrutura
 struct ButtonPins button_pins = {5, 6};
-
-// Variável para armazenar o número exibido
-volatile int numero_exibido = 0;
-
-// Prototótipos das funções
-void gpio_irq_handler(uint gpio, uint32_t events);
-void exibir_numero(int numero);
-
-
-
-// Função de interrupção para os botões
-void gpio_irq_handler(uint gpio, uint32_t events) {
-    sleep_ms(50); // Debounce simples
-    if (gpio == button_pins.button_a) {
-        numero_exibido = (numero_exibido + 1) % 10; // Incrementa e mantém no intervalo 0-9
-    } else if (gpio == button_pins.button_b) {
-        numero_exibido = (numero_exibido - 1 + 10) % 10; // Decrementa e mantém no intervalo 0-9
-    }
-    exibir_numero(numero_exibido); // Mostra o número na saída serial
-}
-
-// Função para exibir o número na saída serial
-void exibir_numero(int numero) {
-    printf("Número exibido: %d\n", numero);
-}
-
 
 struct LEDPins {
     uint red;
@@ -60,19 +36,56 @@ struct MatrixLedWS2812 {
     uint8_t blue;
 };
 
-
+// Instância dos LEDs
 struct LEDPins led_pins = {13, 11, 12};
 struct MatrixLedWS2812 matrix_leds[5][5];
 
-// Função para atualizar os estados dos LEDs
-void set_led_color(struct LEDPins leds, bool R, bool G, bool B) {
-    gpio_put(leds.red, R);   // Configura o estado do LED vermelho
-    gpio_put(leds.green, G); // Configura o estado do LED verde
-    gpio_put(leds.blue, B);  // Configura o estado do LED azul
-}
-
+// Variável para armazenar o número exibido
+volatile int numero_exibido = 0;
+static volatile uint a = 1;
+static volatile uint32_t last_time = 0; // Armazena o tempo do último evento (em microssegundos)
 bool led_on = false;
 
+// Prototótipos das funções
+void gpio_irq_handler(uint gpio, uint32_t events);
+void exibir_numero(int numero);
+void set_led_color(struct LEDPins leds, bool R, bool G, bool B);
+bool repeating_timer_callback(struct repeating_timer *t);
+
+// Função de interrupção para os botões
+void gpio_irq_handler(uint gpio, uint32_t events) {
+    uint32_t current_time = to_us_since_boot(get_absolute_time());
+    printf("A = %d\n", a);
+    
+    if (current_time - last_time > 200000) { // 200 ms de debouncing
+        last_time = current_time;
+        printf("Mudanca de Estado do Led. A = %d\n", a);
+        gpio_put(led_pins.red, !gpio_get(led_pins.red));
+        a++;
+    }
+    
+    if (gpio == button_pins.button_a) {
+        numero_exibido = (numero_exibido + 1) % 10;
+    } else if (gpio == button_pins.button_b) {
+        numero_exibido = (numero_exibido - 1 + 10) % 10;
+    }
+    
+    exibir_numero(numero_exibido);
+}
+
+// Função para exibir o número na saída serial
+void exibir_numero(int numero) {
+    printf("Número exibido: %d\n", numero);
+}
+
+// Função para atualizar os estados dos LEDs
+void set_led_color(struct LEDPins leds, bool R, bool G, bool B) {
+    gpio_put(leds.red, R);
+    gpio_put(leds.green, G);
+    gpio_put(leds.blue, B);
+}
+
+// Callback para o temporizador repetitivo
 bool repeating_timer_callback(struct repeating_timer *t) {
     printf("1 segundo passou\n");
     led_on = !led_on;
@@ -82,6 +95,14 @@ bool repeating_timer_callback(struct repeating_timer *t) {
 
 int main() {
     stdio_init_all();
+
+    // Inicializa os LEDs
+    gpio_init(led_pins.red);
+    gpio_set_dir(led_pins.red, GPIO_OUT);
+    gpio_init(led_pins.green);
+    gpio_set_dir(led_pins.green, GPIO_OUT);
+    gpio_init(led_pins.blue);
+    gpio_set_dir(led_pins.blue, GPIO_OUT);
 
     // Inicializa os botões
     gpio_init(button_pins.button_a);
@@ -95,46 +116,11 @@ int main() {
     gpio_set_irq_enabled_with_callback(button_pins.button_b, GPIO_IRQ_EDGE_FALL, true, &gpio_irq_handler);
 
     while (true) {
-        sleep_ms(1000); // Mantém o loop principal rodando
+        gpio_put(led_pins.green, true);
+        sleep_ms(TEMPO);
+        gpio_put(led_pins.green, false);
+        sleep_ms(TEMPO);
         printf("Rotina de repetição\n");
     }
     return 0;
 }
-
-
-/*
-int main() {
-    stdio_init_all();
-    
-    gpio_init(led_pins.red);
-    gpio_set_dir(led_pins.red, GPIO_OUT);
-   
-    // Configuração dos pinos GPIO
-    gpio_init(led_pins.green);
-    gpio_init(led_pins.blue);
-
-    gpio_set_dir(led_pins.green, GPIO_OUT);
-    gpio_set_dir(led_pins.blue, GPIO_OUT);
-   
-    // Inicializa a máquina PIO
-    // 5 frames em 1 segundo
-    // Inicializa a matriz de LEDs neoPixel
-    //npInit(MATRIX_LED_PIN);
-    // Limpa a matriz de LEDs
-    //npClear();
-    //animacao5frames1seg();
-
-    struct repeating_timer timer;
-    add_repeating_timer_ms(1000, repeating_timer_callback, NULL, &timer);
-    
-    while (true) {
-
-
-        sleep_ms(10000);
-        printf("Rotina de repetição\n");
-    }
-    
-    return 0;
-}
-
-*/
