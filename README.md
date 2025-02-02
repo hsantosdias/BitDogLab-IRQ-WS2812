@@ -1,5 +1,12 @@
 # BitDogLab-IRQ-WS2812
 
+### Demonstração
+
+Além do código-fonte, disponibilizo um vídeo demonstrando o funcionamento do projeto na placa BitDogLab.
+
+[Video demonstrado o projeto em funcionamento](https://drive.google.com/file/d/1TTDvBE8vrRn3kkZL7hDkG23QfaxWnmqs/view?usp=sharing "Video de apresentaçãp do projeto")
+
+
 ## Controle de LEDs e Interrupções no RP2040 com PIO e WS2812b
 
 O código combina temporizadores, interrupções externas e comunicação eficiente com LEDs WS2812b, tornando-o uma excelente base para projetos de IoT, automação e sistemas embarcados avançados.
@@ -99,14 +106,6 @@ O código está estruturado e comentado para facilitar a compreensão e reutiliz
 - npWrite() → Atualiza a matriz de LEDs, garantindo sincronização correta.
 - gpio_callback() → Trata eventos de botão e altera a exibição da matriz.
 - blink_led_callback() → Mantém o LED vermelho piscando 5 vezes por segundo.
-
-### Demonstração
-
-Além do código-fonte, disponibilizo um vídeo demonstrando o funcionamento do projeto na placa BitDogLab.
-
-
-[Video demonstrado o projeto em funcionamento](https://drive.google.com/file/d/1TTDvBE8vrRn3kkZL7hDkG23QfaxWnmqs/view?usp=sharing "Video de apresentaçãp do projeto")
-
 
 ### Requisitos para Execução
 
