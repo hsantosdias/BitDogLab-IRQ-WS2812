@@ -4,7 +4,7 @@
 
 O código combina temporizadores, interrupções externas e comunicação eficiente com LEDs WS2812b, tornando-o uma excelente base para projetos de IoT, automação e sistemas embarcados avançados.
 
-## **Por que esse projeto escolhido e de extrema importancia?**
+## **Por que esse projeto escolhido é de extrema importancia?**
 
 - Aprendizado sobre PIO no RP2040 → A PIO é um recurso poderoso do RP2040 que permite comunicação precisa com dispositivos como os LEDs WS2812, sem sobrecarregar a CPU.
 - Interrupções e eficiência energética → A abordagem baseada em IRQ (Interrupções) minimiza o consumo de CPU ao evitar polling constante.
@@ -34,6 +34,25 @@ O código combina temporizadores, interrupções externas e comunicação eficie
 [![Simulador do Projeto](imgs/simulador.png "Simulador do Projeto")](https://github.com/hsantosdias/BitDogLab-IRQ-WS2812/blob/main/imgs/simulador.png?raw=true "Simulador do Projeto")
 
 ### Fluxograma do projeto
+
+#### Explicação do Fluxograma
+1. Bloco de Inicialização (cluster_Init)
+- Start → O programa inicia sua execução.
+- Init → GPIOs, timers e a matriz WS2812 são configurados.
+- Loop → O loop principal é iniciado para manter o sistema rodando.
+1. Temporizador Periódico (cluster_TimerPeriodico)
+- Loop → No loop principal, o temporizador periódico verifica o tempo a cada 200ms.
+- Semaforo → O LED vermelho alterna entre ligado/desligado 5 vezes por segundo.
+- SerialMsg → Mensagens de status podem ser enviadas para a saída serial.
+- Loop → O fluxo retorna ao loop principal.
+2. Temporizador One-Shot para Botões (cluster_TimerOneShot)
+- Loop → O programa verifica eventos no GPIO.
+- BotaoPress → Se o botão for pressionado, uma interrupção é gerada.
+- OneShot → Um timer one-shot é acionado para debounce.
+- Debounce → Confirma se o botão realmente foi pressionado (evita falsos acionamentos).
+- EndSeq → Atualiza a exibição da matriz WS2812.
+- Loop → O fluxo retorna ao loop principal.
+
 
 [![Fluxograma do projeto](imgs/fluxograma.png "Fluxograma do projeto")](https://github.com/hsantosdias/BitDogLab-IRQ-WS2812/blob/main/imgs/fluxograma.png?raw=true "Fluxograma do projeto")
 
@@ -71,7 +90,7 @@ O código está estruturado e comentado para facilitar a compreensão e reutiliz
 
 ##### Principais Arquivos
 
-- main.c → Código principal com controle de LEDs e botões via interrupções.
+- BitDogLab-IRQ-WS2812.c → Código principal com controle de LEDs e botões via interrupções.
 - ws2818b.pio.h → Código PIO customizado para comunicação eficiente com os LEDs WS2812.
 
 ##### Estrutura do Código
